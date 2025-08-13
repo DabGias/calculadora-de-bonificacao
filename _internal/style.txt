@@ -1,0 +1,28 @@
+QMainWindow {
+    font-family: "Inter";
+    background-color: #1c1c1c;
+}
+
+QTableView {
+    background-color: #222222;
+}
+
+QPushButton {
+    color: green;
+    padding: 10px;
+    border-style: solid;
+    border-color: green;
+    border-width: 3px;
+    border-radius: 10px;
+    font: bold;
+}
+
+QPushButton:hover {
+    color: white;
+    background-color: green;
+}
+                
+QPushButton:!enabled {
+    color: gray;
+    border-color: gray;      
+}
