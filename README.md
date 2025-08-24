@@ -12,7 +12,16 @@ Para instalarmos o app precisamos seguir os seguintes passos:
 ```bash
 git clone https://github.com/DabGias/calculadora-de-bonificacao
 cd calculadora-de-bonificacao
-activate
+python -m venv .venv
+
+# Windows
+
+./.venv/Scripts/activate
+
+# Linux
+
+source .venv/bin/activate
+
 pip install -r ./requirements.txt
 ```
 
