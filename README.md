@@ -30,11 +30,11 @@ Para gerarmos o executável devemos usar os seguintes comandos:
 ### Linux
 
 ```bash
-pyinstaller -F main.py models.py views.py components.py utils.py --add-data ./_internal/:. -n "Calculadora de Bonificação"
+pyinstaller -F main.py models.py views.py components.py utils.py -n "Calculadora de Bonificação"
 ```
 
 ### Windows/MacOS
 
 ```bash
-pyinstaller -F main.py models.py views.py components.py utils.py --add-data ./_internal/:. -n "Calculadora de Bonificação" -w -i ./_internal/icon.png
+pyinstaller -F main.py models.py views.py components.py utils.py -n "Calculadora de Bonificação" -w -i ./icon.ico
 ```

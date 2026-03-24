@@ -1,4 +1,5 @@
 import os
+
 from PySide6.QtWidgets import (
     QTableView, 
     QWidget,
@@ -34,14 +35,14 @@ class TextInput(QLineEdit):
 
 
 class InputBox(QWidget):
-    def __init__(self, label_txt: str, input_placeholder: str):
+    def __init__(self, label: str, placeholder: str):
         super().__init__()
 
 
-        self.label: QLabel = QLabel(label_txt)
+        self.label: QLabel = QLabel(label)
 
 
-        self.input: TextInput = TextInput(input_placeholder)
+        self.input: TextInput = TextInput(placeholder)
 
 
         layout: QLayout = QVBoxLayout()
@@ -57,17 +58,17 @@ class InputTray(QWidget):
         super().__init__()
 
 
-        config: dict = load_config()
+        self.config: dict = load_config()
 
 
-        self.per_day_payment_input_box: InputBox = InputBox("Pagamento por Dia", "Ex.: 12,00")
+        self.per_day_payment_input_box: InputBox = InputBox(label = "Pagamento por Dia", placeholder = "Ex.: 12,00")
 
-        self.per_day_payment_input_box.input.setText("{:.2f}".format(config["per_day_payment"]).replace(".", ","))
+        self.per_day_payment_input_box.input.setText("{:.2f}".format(self.config["per_day_payment"] if self.config["per_day_payment"] > 0 else float(1)).replace(".", ","))
 
 
-        self.parcial_debt_amount_input_box: InputBox = InputBox("Faltas com desconto", "Ex.: 2")
+        self.parcial_debt_amount_input_box: InputBox = InputBox(label = "Faltas com desconto", placeholder = "Ex.: 2")
 
-        self.parcial_debt_amount_input_box.input.setText(str(config["parcial_debt_amount"]))
+        self.parcial_debt_amount_input_box.input.setText(str(self.config["parcial_debt_amount"] if self.config["parcial_debt_amount"] >= 0 else 0))
 
 
         self.apply_button: Button = Button("Aplicar")

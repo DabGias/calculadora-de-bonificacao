@@ -1,9 +1,12 @@
+import os
+
 from PySide6.QtWidgets import (
     QMainWindow,
     QWidget,
     QLayout,
     QVBoxLayout,
-    QFileDialog
+    QFileDialog,
+    QMessageBox
 )
 from PySide6.QtCore import (
     QSortFilterProxyModel
@@ -15,7 +18,12 @@ from components import (
     Table
 )
 from models import TableModel
-from utils import create_excel_file, file_to_dict, load_config, write_config
+from utils import (
+    create_excel_file, 
+    file_to_dict, 
+    load_config, 
+    write_config
+)
 
 
 class HomeWidget(QWidget):
@@ -31,6 +39,9 @@ class HomeWidget(QWidget):
 
         self.input_tray: InputTray = InputTray()
 
+        self.input_tray.per_day_payment_input_box.input.editingFinished.connect(self.toggle_apply_button)
+        self.input_tray.parcial_debt_amount_input_box.input.editingFinished.connect(self.toggle_apply_button)
+        
         self.input_tray.apply_button.clicked.connect(self.apply_changes)
 
 
@@ -40,6 +51,7 @@ class HomeWidget(QWidget):
 
         self.button_tray.open_file_button.clicked.connect(self.button_tray.open_file)
         self.button_tray.export_table_button.clicked.connect(self.button_tray.open_dir)
+        
         self.button_tray.file_dialog.accepted.connect(self.on_accepted) 
 
 
@@ -68,6 +80,23 @@ class HomeWidget(QWidget):
         self.table.setSortingEnabled(True)
 
 
+    def draw_dialog(self, path: str):
+        msg_box: QMessageBox = QMessageBox()
+
+        msg_box.setEscapeButton(QMessageBox.StandardButton.Close)
+
+        if os.path.exists(path):
+            msg_box.setIcon(QMessageBox.Icon.Information)
+            msg_box.setText("Sucesso!")
+            msg_box.setInformativeText(f"Arquivo exportado para: {path}")
+        else:
+            msg_box.setIcon(QMessageBox.Icon.Critical)
+            msg_box.setText("Erro!")
+            msg_box.setInformativeText(f"Erro ao exportar arquivo para: {path}")
+
+        msg_box.exec()
+
+
     def on_accepted(self):
         if self.button_tray.file_dialog.fileMode() == QFileDialog.FileMode.ExistingFile:
             self.draw_table()
@@ -77,13 +106,25 @@ class HomeWidget(QWidget):
             dir_path: str = self.button_tray.file_dialog.selectedUrls()[0].path()
 
             create_excel_file(self.data if self.data is not None else {}, dir_path)
+            self.draw_dialog(dir_path)
+
+
+    def data_is_valid(self) -> bool:
+        return self.input_tray.get_parcial_debt_amount_value() >= 0 and self.input_tray.get_per_day_payment_value() > 0
+    
+
+    def toggle_apply_button(self):
+        self.input_tray.apply_button.setEnabled(self.data_is_valid())
 
 
     def apply_changes(self):
         config: dict = load_config()
 
-        config["per_day_payment"] = self.input_tray.get_per_day_payment_value()
-        config["parcial_debt_amount"] = self.input_tray.get_parcial_debt_amount_value()
+        per_day_payment: float = self.input_tray.get_per_day_payment_value()
+        parcial_debt_amount: int = self.input_tray.get_parcial_debt_amount_value()
+
+        config["per_day_payment"] = per_day_payment if per_day_payment > 0 else 1
+        config["parcial_debt_amount"] = parcial_debt_amount if parcial_debt_amount >= 0 else 0
 
         write_config(config)
 
