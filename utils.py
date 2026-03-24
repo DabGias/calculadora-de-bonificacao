@@ -168,7 +168,7 @@ def setup_data_path(path: str):
         
 
 def get_data_path() -> str:
-    path: str = f"/home/{getpass.getuser()}/.config/Calculadora de Bonificação/" if platform.system() == "Linux" else f"{os.getenv("SystemDrive")}/Program Files/Calculadora de Bonificação/"
+    path: str = f"/home/{getpass.getuser()}/.config/Calculadora de Bonificação/" if platform.system() == "Linux" else f"{os.getenv("SystemDrive")}/Users/{getpass.getuser()}/Calculadora de Bonificação/"
 
     if not os.path.exists(path): 
         setup_data_path(path)
